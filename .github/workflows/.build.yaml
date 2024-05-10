@@ -1,0 +1,52 @@
+name: build and test
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+    - '**.cs'
+    - '**.csproj'
+
+env:
+  DOTNET_VERSION: '8.0.102' # The .NET SDK version to use
+
+jobs:
+  build:
+
+    name: build-${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    services:
+      mongodb:
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+          MONGO_INITDB_DATABASE: ActorSystemDB
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        cd ActorSystem
+        dotnet restore
+      
+    - name: Build
+      run: |
+        cd ActorSystem
+        dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: |
+        cd ActorSystem
+        dotnet test --no-restore --verbosity normal

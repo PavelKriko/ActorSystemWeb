@@ -1,0 +1,23 @@
+@model MessageViewModel
+
+<form asp-action="SendMessage" method="post" enctype="multipart/form-data">
+    <div>
+        <label>Группа:</label>
+        <input asp-for="Group" />
+    </div>
+    <div>
+        <label>Название:</label>
+        <input asp-for="Name" />
+    </div>
+    <div>
+        <label>Описание:</label>
+        <textarea asp-for="Description"></textarea>
+    </div>
+    <div>
+        <label>Файлы:</label>
+        <input type="file" asp-for="Files" multiple />
+    </div>
+    <div>
+        <input type="submit" value="Отправить" />
+    </div>
+</form>
